@@ -1,6 +1,7 @@
 // userAgent.tsx
 import { BackToHome } from "@/components/backToHome/backToHome";
 
+
 type UserAgentProps = {
   userAgent: string | undefined;
 };
