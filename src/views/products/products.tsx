@@ -1,18 +1,23 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Product } from "@/types";
-import { ProductModal } from "@/views/products/productModal/productModal";
 import { BackToHome } from "@/components/backToHome/backToHome";
-import { ProductList } from "@/views/products/productList/productList";
-import { PaginationControls } from "@/views/products/paginationControls/paginationControls";
-import { usePagination } from "@/hooks/usePagination";
 import { PRODUCTS_DATA } from "@/data/productsData";
+import { usePagination } from "@/hooks/usePagination";
+import { Product } from "@/types";
+import { PaginationControls } from "@/views/products/paginationControls/paginationControls";
+import { ProductList } from "@/views/products/productList/productList";
+import { ProductModal } from "@/views/products/productModal/productModal";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
 
-export const Products: React.FC = () => {
+const ProductsContent: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const { currentPage, totalPages, paginatedItems: paginatedProducts, handlePageChange } = usePagination({
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedProducts,
+    handlePageChange,
+  } = usePagination({
     items: PRODUCTS_DATA,
     itemsPerPage: 5,
   });
@@ -34,20 +39,23 @@ export const Products: React.FC = () => {
   const handleOpenModal = useCallback(
     (product: Product) => {
       setSelectedProduct(product);
-      router.push(`?productId=${product.id}`); 
+      router.push(`?productId=${product.id}`);
     },
     [router]
   );
 
   const handleCloseModal = useCallback(() => {
     setSelectedProduct(null);
-    router.push("/products"); 
+    router.push("/products");
   }, [router]);
 
   return (
     <div>
       <BackToHome />
-      <ProductList products={paginatedProducts} onOpenModal={handleOpenModal} />
+      <ProductList
+        products={paginatedProducts}
+        onOpenModal={handleOpenModal}
+      />
       <div className="h-4" />
       <PaginationControls
         currentPage={currentPage}
@@ -58,5 +66,13 @@ export const Products: React.FC = () => {
         <ProductModal product={selectedProduct} onClose={handleCloseModal} />
       )}
     </div>
+  );
+};
+
+export const Products: React.FC = () => {
+  return (
+    <React.Suspense fallback={<p>Loading...</p>}>
+      <ProductsContent />
+    </React.Suspense>
   );
 };
